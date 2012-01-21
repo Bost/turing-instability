@@ -57,3 +57,11 @@
         (abs (- (r n) (j n)))
         (abs (- (rt n) (jt n)))))
 
+; Translate the relationship value to words a la: like, dislike, ignore, hate, etc
+; Note: This is propably the ugly imperative part of the program 
+(defun qualify (val who whom)
+(format t "~a ~a ~a ~%"
+    who
+    (cond ((<  val 0.5) "dislikes")
+          ((>= val 0.5) "likes"))
+    whom))
