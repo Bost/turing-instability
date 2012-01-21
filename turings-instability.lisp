@@ -25,45 +25,20 @@
 ; Basic function for Roberto
 (defun rt (n) (if (= n 1) *day-1-rt* (rt-n1 (- n 1))))
 
-
-(load "relationship-functions.lisp")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Average and Difference functions for today
-
-; J+(n) = (J(n) + J'(n)) / 2
+; Julia & Juliette Averadge day n:   J+(n) = (J(n) + J'(n)) / 2
 (defun j-jt-avrg (n)  (/ (+ (j n) (jt n)) 2))
 
-; J-(n) = (J(n) - J'(n)) / 2
+; Julia & Juliette Difference day n: J-(n) = (J(n) - J'(n)) / 2
 (defun j-jt-diff (n)  (/ (- (j n) (jt n)) 2))
 
-; R+(n) = (R(n) + R'(n)) / 2
+; Romeo & Roberto Averadge day n:    R+(n) = (R(n) + R'(n)) / 2
 (defun r-rt-avrg (n)  (/ (+ (r n) (rt n)) 2))
 
-; R-(n) = (R(n) - R'(n)) / 2
+; Romeo & Roberto Difference day n:  R-(n) = (R(n) - R'(n)) / 2
 (defun r-rt-diff (n)  (/ (- (r n) (rt n)) 2))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Average and Difference functions for the next day
-
-; J+(n+1) = J+(n) + R+(n)
-;(defun j-jt-avrg-n1 (n) (+ (j-jt-avrg-n1 (- n 1)) (r-rt-avrg-n1 (- n 1))))
- (defun j-jt-avrg-n1 (n) (+ (j-jt-avrg    (- n 1)) (r-rt-avrg    (- n 1))))
-
-; R+(n+1) = -J+(n)
-;(defun r-rt-avrg-n1 (n) (* -1 (j-jt-avrg-n1 (- n 1))))
- (defun r-rt-avrg-n1 (n) (* -1 (j-jt-avrg    (- n 1))))
-
-; J-(n+1) = (1 -2*s) * (J-(n) + R-(n))
-(defun j-jt-diff-n1 (n) 
-(* (- 1 (* 2 *s*))
-;  (+ (j-jt-diff-n1 (- n 1)) (r-rt-diff-n1 (- n 1)))))
-   (+ (j-jt-diff    (- n 1)) (r-rt-diff    (- n 1)))))
-
-; R-(n+1) = -J-(n)
-;(defun r-rt-diff-n1 (n) (* -1 (j-jt-diff-n1 (- n 1))))
- (defun r-rt-diff-n1 (n) (* -1 (j-jt-diff    (- n 1))))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(load "brothers-talk.lisp")
+ (load "sisters-talk.lisp")
 
 (defun print-all (n)
   (print-j-jt n)
@@ -72,13 +47,13 @@
 )
 
 (defun print-j-jt (n)
-(format t "Day: ~a; Julia, Juliette: ~a; ~a; Diff: ~a~%" n (j n) (jt n) (j-jt-diff n)))
+(format t "Day: ~2d; Julia: ~13a, Juliette: ~13a; Diff: ~13a~%" n (j n) (jt n) (j-jt-diff n)))
 
 (defun print-r-rt (n)
-(format t "Day: ~a; Romeo; Roberto:  ~a; ~a; Diff: ~a~%" n (r n) (rt n) (r-rt-diff n)))
+(format t "Day: ~2d; Romeo: ~13a; Roberto:  ~13a; Diff: ~13a~%" n (r n) (rt n) (r-rt-diff n)))
 
 (defun print-abs-diffs (n)
-(format t "Day: ~a; Romeo-Julia-Diff: ~a; Roberto-Juliette-Diff: ~a~%" 
+(format t "Day: ~2d; Diff:  ~13a; Diff:     ~13a~%" 
 	n
         (abs (- (r n) (j n)))
         (abs (- (rt n) (jt n)))))
