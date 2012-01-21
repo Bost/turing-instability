@@ -3,7 +3,7 @@
 (defparameter *day-1-r* 0); In the begining Romeno is neutral towards Julia
 
 (defparameter *day-1-jt* 0); In the begining Juliette is neutral towars Roberto
-(defparameter *day-1-rt* 1); In the begining Roberto
+(defparameter *day-1-rt* 1); In the begining Roberto likes Juliette
 
 ; Influence factor saying how much Julia and Juliette influence each other
 ; 0 <= *s* <= 1; 0: no influence, 1: total influence
@@ -37,8 +37,7 @@
 ; Romeo & Roberto Difference day n:  R-(n) = (R(n) - R'(n)) / 2
 (defun r-rt-diff (n)  (/ (- (r n) (rt n)) 2))
 
-;(load "brothers-talk.lisp")
- (load "sisters-talk.lisp")
+(load "relationship-functions.lisp")
 
 (defun print-all (n)
   (print-j-jt n)
