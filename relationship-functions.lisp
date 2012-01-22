@@ -62,3 +62,50 @@
 ;      R+(n+1) = -[J+(n)]
 ;(defun r-rt-avrg-n1 (n) (-(j-jt-avrg n)))
 
+
+;;; Following memorisation technique (closures) fantastically increases computation
+;;; speed! 3 times WOW!
+
+; symbol-function returns the function definition!
+(let ((old-j-n1 (symbol-function 'j-n1))
+      (previous (make-hash-table)))
+  (defun j-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-j-n1 n)))))
+
+(let ((old-r-n1 (symbol-function 'r-n1))
+      (previous (make-hash-table)))
+  (defun r-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-r-n1 n)))))
+
+(let ((old-r-n1 (symbol-function 'r-n1))
+      (previous (make-hash-table)))
+  (defun r-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-r-n1 n)))))
+
+(let ((old-jt-n1 (symbol-function 'jt-n1))
+      (previous (make-hash-table)))
+  (defun jt-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-jt-n1 n)))))
+
+(let ((old-rt-n1 (symbol-function 'rt-n1))
+      (previous (make-hash-table)))
+  (defun rt-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-rt-n1 n)))))
+
+(let ((old-j-jt-diff-n1 (symbol-function 'j-jt-diff-n1))
+      (previous (make-hash-table)))
+  (defun j-jt-diff-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-j-jt-diff-n1 n)))))
+
+(let ((old-r-rt-diff-n1 (symbol-function 'r-rt-diff-n1))
+      (previous (make-hash-table)))
+  (defun r-rt-diff-n1 (n) 
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-r-rt-diff-n1 n)))))
+

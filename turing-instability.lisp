@@ -66,7 +66,7 @@
 (defparameter *rt-name* "Roberto")
 
 ;;;;;; human-prints
-(defun human-print-general (j jt n j-name r-name jt-name rt-name)
+(defun human-print-general (n j jt j-name r-name jt-name rt-name)
   (format nil "~a and ~a. (Their) ~a"
 		  (qualify (funcall j n)  j-name  r-name)
 		  (qualify (funcall jt n) jt-name rt-name)
@@ -76,8 +76,8 @@
 (defun human-print-all (n)
   (format t "Day: ~d:~%~a ~a ~a"
 		  n
-		  (human-print-general 'j 'jt n *j-name* *r-name* *jt-name* *rt-name*)
-		  (human-print-general 'r 'rt n *r-name* *j-name* *rt-name* *jt-name*)
+		  (human-print-general   n 'j 'jt *j-name* *r-name* *jt-name* *rt-name*)
+		  (human-print-general   n 'r 'rt *r-name* *j-name* *rt-name* *jt-name*)
 		  (human-print-abs-diffs n 'j 'r 'jt 'rt *j-name* *r-name* *rt-name* *jt-name*)))
 
 (defun human-print-abs-diffs-couple (n j r j-name r-name)
@@ -88,23 +88,19 @@
 		    (abs (- (funcall j n) (funcall r n)))))
 
 (defun human-print-abs-diffs (n j r jt rt j-name r-name jt-name rt-name)
-  ;(format t "Day: ~2d: ~a Feelings of name-0 and name-1 are ~a (~a).~%"
   (format nil "~a ~a"
 		  (human-print-abs-diffs-couple n j r j-name r-name)
-		  (human-print-abs-diffs-couple n jt rt jt-name rt-name)
-		  ;(qualify-diff (abs (- (funcall rt n) (funcall jt n))))
-		  ;(abs (- (funcall rt n) (funcall jt n)))
-		  ))
+		  (human-print-abs-diffs-couple n jt rt jt-name rt-name)))
 
 ;;;;;; machine-prints
 
-(defun machine-print-general (j jt n j-name r-name jt-name rt-name func-diff)
+(defun machine-print-general (n j jt j-name r-name jt-name rt-name func-diff)
   (format t "Day: ~2d; ~a: ~13a, ~a: ~13a; Diff: ~13a~%"
 		  n j-name (funcall j n) jt-name (funcall jt n) (funcall func-diff n)))
 
 (defun machine-print-all (n)
-  (machine-print-general 'j 'jt n *j-name* *r-name* *jt-name* *rt-name* 'j-jt-diff)
-  (machine-print-general 'r 'rt n *r-name* *j-name* *rt-name* *jt-name* 'r-rt-diff)
+  (machine-print-general   n 'j 'jt *j-name* *r-name* *jt-name* *rt-name* 'j-jt-diff)
+  (machine-print-general   n 'r 'rt *r-name* *j-name* *rt-name* *jt-name* 'r-rt-diff)
   (machine-print-abs-diffs n 'j 'r 'jt 'rt))
 
 (defun print-j-jt (n)
