@@ -1,3 +1,5 @@
+(load "svg.lisp")
+
 ; current affection: 1 - positive ; 0 - neutral; -1 - negative
 (defparameter *day-1-j* 1); In the begining Julia likes Romeo
 (defparameter *day-1-r* 0); In the begining Romeno is neutral towards Julia
@@ -38,6 +40,7 @@
 (defun r-rt-diff (n)  (/ (- (r n) (rt n)) 2))
 
 (load "relationship-functions.lisp")
+
 
 ; relationship threshold to divide like/ignore/dislike areas
 (defparameter *threshold* 0.333)
@@ -114,4 +117,17 @@
 		  n
 		  (abs (- (funcall r n) (funcall j n)))
 		  (abs (- (funcall rt n) (funcall jt n)))))
+
+; TODO this method should evaluate to a two dimensional ?? (array or list or hashmap) for a given function: [day-i, value-of-diff-i]
+(defun calc-1st-n-days (n j-jt-diff-n1)
+  (loop for i below n
+		collect (list (+ i 1) (funcall j-jt-diff-n1 (+ i 1)))))
+
+(defun tag-circle (x y)
+  ;(tag circle (cx "100" cy "200" r "4" fill "blue" stroke "black" stroke-width "2") ()))
+  (tag circle (cx x cy y r "4" fill "blue") ()))
+
+
+;svg macro usage: (svg (tag-circle 50 40))
+;<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="50" cy="40" r="4" fill="blue"></circle></svg>
 
