@@ -120,14 +120,25 @@
 
 ; TODO this method should evaluate to a two dimensional ?? (array or list or hashmap) for a given function: [day-i, value-of-diff-i]
 (defun calc-1st-n-days (n j-jt-diff-n1)
+;example:
+;CL-USER> (calc-1st-n-days 4 'j-jt-diff-n1)
+;((1 -0.0) (2 -0.28399995) (3 0.68463194) (4 0.19869485))
   (loop for i below n
-		collect (list (+ i 1) (funcall j-jt-diff-n1 (+ i 1)))))
+     collect (list (+ i 1) (funcall j-jt-diff-n1 (+ i 1)))))
 
 (defun tag-circle (x y)
-  ;(tag circle (cx "100" cy "200" r "4" fill "blue" stroke "black" stroke-width "2") ()))
+;example:
+;CL-USER> (tag-circle 20 30)
+;<circle cx="20" cy="30" r="4" fill="blue"></circle>
   (tag circle (cx x cy y r "4" fill "blue") ()))
 
 
 ;svg macro usage: (svg (tag-circle 50 40))
 ;<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="50" cy="40" r="4" fill="blue"></circle></svg>
 
+(defun tag-circle-one-day (list-prm)
+  (tag-circle (car list-prm) (cdr list-prm)))
+
+;(defun tag-circle-1st-n-days (n j-jt-diff-n1)
+; TODO
+;)
