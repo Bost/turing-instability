@@ -1,5 +1,7 @@
 (ns turing-instability.core
-  (:use clojure.contrib.math))
+  (:use clojure.math.numeric-tower
+  ;clojure.contrib.math
+  ))
 
 ;(load-file "src/svg.clj")
 
