@@ -1,5 +1,8 @@
+*~
+*.jar
+*.swp
 /pom.xml
-*jar
+/bin
 /lib
 /classes
 /native

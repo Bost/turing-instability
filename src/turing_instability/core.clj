@@ -1,148 +1,12 @@
-(ns turing-instability.core
-  (:use clojure.math.numeric-tower
-  ;clojure.contrib.math
-  ))
-
-;(load-file "src/svg.clj")
-
-(defn handler [request]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Hello World"})
-
-(comment
-(defn mockup-2 []
- (html
-  [:head [:title "Mini-Browser"]]
-  [:body {:id "browser"}
-   
-   [:div {:id "header"} [:h2 "Mini-Browser"]]
-   
-   [:div {:id "content"} "Body"]
-   
-   [:div {:id "footer"}
-    (str "Jedna plus dva rovna sa " (+ 1 3) )]
-   ]
-   ;[:circle {:cx "20" :cy "30" :fill "blue"}]
-  
-  ))
-)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;(load-file "src/relationshipFunctions.clj")
-
-(declare j)
-(declare r)
-(declare jt)
-(declare rt)
-(declare j-jt-diff)
-(declare r-rt-diff)
-
-; Julia's next day if not influenced by Juliette:
-;      J(n+1) = J[n] + R[n];             (defn j-n1 [n] (+ (j n) (r n)))
-;
-; Julia's next day if influenced by Juliette by the factor of *s*:
-;      J(n+1) = J[n] + R[n] + s*[J'[n] - J[n]] + s*[R[n] - R'[n]]
-(defn j-n1 [n]
-  (+ (j n) (r n)
-	 (* *s*
-		(- (jt n) (j n)))))
-
-; Romeo's next day if not influenced by Roberto:
-;      R(n+1) = -J[n];                   (defn r-n1 [n] (-(j n)))
-;
-; Romes's next day if influenced by Roberto by the factor of *p*:
-;      R(n+1) = -J[n] - p*[R'[n] - R[n]]
-(defn r-n1 [n]
-  (- (-(j n))
-	 (* *p*
-		(- (rt n) (r n)))))
-
-; Juliette next day if not influenced by Julia:
-;      J'(n+1) = J'[n] + R'[n]           (defn jt-n1 [n] (+ (jt n) (rt n)))
-;
-; Juliette's next day if influenced by Julia by the factor of *s*:
-;      J'(n+1) = J'[n] + R'[n] + s*[J[n] - J'[n]] + s*[R[n] - R'[n]]
-(defn jt-n1 [n]
-  (+ (jt n) (rt n))
-  (* *s* (- (j n) (jt n))
-	 (* *s* (- (r n) (rt n)))))
-
-; Roberto's next day if not influenced by Romeo:
-;      R'(n+1) = -J'[n]                  (defn rt-n1 [n] (-(jt n)))
-;
-; Roberto' next day if influenced by Romeo by the factor of *p*:
-;      R'(n+1) = -J[n] - p*[R[n] - R'[n]]
-(defn rt-n1 [n]
-  (- (-(j n))
-	 (* *p*
-		(- (r n) (rt n)))))
-
-; Julia & Juliette Difference next day if they influence each other by the factor of *s*:
-;      J-(n+1) = J-[n] + R-[n]           (defn j-jt-diff-n1 [n] (+ (j-jt-diff n) (r-rt-diff n)))
-; Julia & Juliette Difference next day if they don't influence each other:
-;      J-(n+1) = (1 - 2*s) * [J-[n] + R-[n]]
-(defn j-jt-diff-n1 [n]
-  (* (- 1 (* 2 *s*))
-	 (+ (j-jt-diff n) (r-rt-diff n))))
-
-; Romeo & Roberto Difference next day if they influence each other:
-;      R-(n+1) = -[J-[n]]                (defn r-rt-diff-n1 [n] (-(j-jt-diff n)))
-; Romeo & Roberto Difference for the next day if they don't influence each other:
-;      R-(n+1) = -(1 - 2*p) * J-[n]
-(defn r-rt-diff-n1 [n]
-  (* (-(- 1 (* 2 *p*))
-	   (j-jt-diff n))))
-
-; Julia & Juliette Averadge for the next day if they don't influence each other:
-;      J+(n+1) = J+[n] + R+[n]
-;(defn j-jt-avrg-n1 [n] (+ (j-jt-avrg n) (r-rt-avrg n)))
-
-; Romeo & Roberto Averadge for the next day if they don't influence each other:
-;      R+(n+1) = -[J+[n]]
-;(defn r-rt-avrg-n1 [n] (-(j-jt-avrg n)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; current affection: 1 - positive ; 0 - neutral; -1 - negative
-(def day-1-j 1); In the begining Julia likes Romeo
-(def day-1-r 0); In the begining Romeno is neutral towards Julia
-
-(def day-1-jt 0); In the begining Juliette is neutral towars Roberto
-(def day-1-rt 1); In the begining Roberto likes Juliette
-
-; Influence factor saying how much Julia and Juliette influence each other
-; 0 <= s <= 1; 0: no influence, 1: total influence
-(def s 0.9)
-
-; Influence factor saying how much Romeo and Roberto influence each other
-; 0 <= p <= 1; 0: no influence, 1: total influence
-(def p 0.1)
-
-; Basic function for Julia
-(defn j [n] (if (= n 1) day-1-j (j-n1 (- n 1))))
-
-; Basic function for Romeo
-(defn r [n] (if (= n 1) day-1-r (r-n1 (- n 1))))
-
-; Basic function for Juliette
-(defn jt [n] (if (= n 1) day-1-jt (jt-n1 (- n 1))))
-
-; Basic function for Roberto
-(defn rt [n] (if (= n 1) day-1-rt (rt-n1 (- n 1))))
-
-; Julia & Juliette Averadge day n:   J+[n] = (J[n] + J'[n]) / 2
-(defn j-jt-avrg [n]  (/ (+ (j n) (jt n)) 2))
-
-; Julia & Juliette Difference day n: J-[n] = (J[n] - J'[n]) / 2
-(defn j-jt-diff [n]  (/ (- (j n) (jt n)) 2))
-
-; Romeo & Roberto Averadge day n:    R+[n] = (R[n] + R'[n]) / 2
-(defn r-rt-avrg [n]  (/ (+ (r n) (rt n)) 2))
-
-; Romeo & Roberto Difference day n:  R-[n] = (R[n] - R'[n]) / 2
-(defn r-rt-diff [n]  (/ (- (r n) (rt n)) 2))
-
+(ns ^{:author "The Bost"
+      :doc "TODO doc for this namespace"}
+  turing-instability.core
+  (:use
+    clojure.math.numeric-tower
+    turing-instability.init
+    turing-instability.relfuncs
+    turing-instability.svg
+    ))
 
 ; relationship threshold to divide like/ignore/dislike areas
 (def threshold 0.333)
@@ -219,13 +83,7 @@
   (println "Day: " n "; Romeo: " (r n) "; Roberto:  " (rt n) "; Diff: "  (r-rt-diff n)))
 
 
-(comment
-(defn tag-circle [x y]
-;usage: (tag-circle 20 30)
-;<circle cx="20" cy="30" r="4" fill="blue"></circle>
-;  (tag circle (cx x cy y r "4" fill "blue") ()))
-   (tag circle (cx x cy y r "4" fill "blue") ()))
-
+(comment ;comment2
 
 ;svg macro usage: (svg (tag-circle 50 40))
 ;<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle cx="50" cy="40" r="4" fill="blue"></circle></svg>
@@ -247,4 +105,5 @@
      ;collect (list (+ i 1) (j-jt-diff-n1 (+ i 1)))))
      do (format t "~%"   ; this is here just to print every tag on a new line
 		(tag-circle (+ i 1) (j-jt-diff-n1 (+ i 1))))))
-)
+
+);comment2
