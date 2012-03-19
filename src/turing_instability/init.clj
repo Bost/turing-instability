@@ -21,3 +21,7 @@
 ; 0 <= p <= 1; 0: no influence, 1: total influence
 (def p 0.1)
 
+
+(def port 8080)
+(def webroute "/webpage")
+(def stylesheet "/style.css")

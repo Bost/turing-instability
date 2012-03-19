@@ -107,3 +107,15 @@
 		(tag-circle (+ i 1) (j-jt-diff-n1 (+ i 1))))))
 
 );comment2
+
+;(defn -main [& args]
+;  (webserver)
+;  (println (str "Webserver started on http://localhost:" port webroute)))
+
+(defn first-n-vals [n f]
+  "TODO first-n-vals evaluates to lazy sequence - is it ok?"
+  (for [i (range 1 n)]
+    ;(dorun
+      (int (* 100 (f i)))
+     ; )
+    ))
