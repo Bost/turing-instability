@@ -112,10 +112,6 @@
 ;  (webserver)
 ;  (println (str "Webserver started on http://localhost:" port webroute)))
 
-(defn first-n-vals [n f]
-  "TODO first-n-vals evaluates to lazy sequence - is it ok?"
-  (for [i (range 1 n)]
-    ;(dorun
-      (int (* 100 (f i)))
-     ; )
-    ))
+(defn first-n-vals [f n]
+  "Return a lazy seq of first n values for a given function f"
+  (map (fn [v] (f v)) (range 1 n)))
