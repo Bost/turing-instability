@@ -48,6 +48,8 @@
 	 (* s
 		(- (jt n) (j n)))))
 
+
+
 ; Romeo's next day if not influenced by Roberto:
 ;      R(n+1) = -J[n];                   (defn r-n1 [n] (-(j n)))
 ;
@@ -101,4 +103,38 @@
 ; Romeo & Roberto Averadge for the next day if they don't influence each other:
 ;      R+(n+1) = -[J+[n]]
 ;(defn r-rt-avrg-n1 [n] (-(j-jt-avrg n)))
+
+;;;;;;;;;;;;;;;
+(comment
+; memoization example in clisp
+; symbol-function returns the function definition!
+(let ((old-j-n1 (symbol-function 'j-n1))
+      (previous (make-hash-table)))
+  (defun j-n1 (n)
+    (or (gethash n previous)
+	    (setf (gethash n previous) (funcall old-j-n1 n)))))
+)
+
+(comment
+(defn memoize [f]
+  (let [mem (atom {})]              ; mem is an atom (reference type) with an initial value of empty hash-map {}
+    (fn [& args]
+      (if-let [                     ; if-let is a combination of 'if' and 'let';
+               e (find @mem args)   ; try to find a value associated with 'args' in the map 'mem', if any non-nil value is found then let it be available under 'e'.
+                                    ; Deref: @form → (deref form); '@mem' returns the current state of the 'mem' atom
+               ]
+        (val e)
+        (let [ret (apply f args)]     ; apply function 'f' to the list of arguments 'args' and store the result in 'ret'
+          (swap! mem assoc args ret)  ; 'swap!' changes the value of the 'mem' atom; assoc[iate]: (assoc map key val)
+                                      ; ie. mem <- assoc mem args ret
+          ret)))))
+)
+
+(def j-n1 (memoize j-n1))
+(def r-n1 (memoize r-n1))
+(def r-n1 (memoize r-n1))
+(def jt-n1 (memoize jt-n1))
+(def rt-n1 (memoize rt-n1))
+(def j-jt-diff-n1 (memoize j-jt-diff-n1))
+(def r-rt-diff-n1 (memoize r-rt-diff-n1))
 
