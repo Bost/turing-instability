@@ -15,32 +15,59 @@
     )
   )
 
-(comment
+(comment  ; use these commands on repl
+  (in-ns 'turing-instability.svg)
   (load "../turing_instability/svg")
   )
 
 (defn scale [v]
-  ;(map (fn [i] (floor (* 100 i))) v)
+  "Scale given value v for the range which can be displayed on the graph"
   (floor (* 100 v))
   )
 
 (defn circle [x y]
-  "usage: (tag-circle 20 30)"
-  "<circle cx="20" cy="30" r="4" fill=\"blue\"></circle>"
+  "Prints svg tag: <circle cx="20" cy="30" r="4" fill=\"blue\"></circle>"
   [:circle {:cx (str x) :cy (str y) :r "6" :fill "red"}]
+  )
+
+(def n 20)
+(def y 20)
+(def y-length 4)
+(def x-width 20)
+(def x-offset 20)
+(def y-offset 20)
+(def scale-line-width 2)
+
+;first-n-vals [f n]
+(def days (range 0 (+ 1 n)))
+(def scaled-vals (map #(scale (j-n1 (+ 1 %))) days))
+(def max-val (reduce max (vec scaled-vals)))
+(def min-val (reduce min (vec scaled-vals)))
+(def abs-min-val (abs min-val))
+
+(defn display-scale-for-day [day-i]
+  (html
+    [:line {:x1 (+ x-offset (* day-i x-width))
+            :y1 (+ y-offset (- y-length) (abs min-val))
+            :x2 (+ x-offset (* day-i x-width))
+            :y2 (+ y-offset y-length (abs min-val))
+            :class "cls"
+            }]))
+
+(defn display-value-for-day [day-i value-day-i]
+  ;(println "i:" i "; yi:" yi "; abs-min-val:" abs-min-val)
+  (circle (+ x-offset (* day-i x-width))
+          (+ y-offset
+             (+ value-day-i
+                ;(abs value-day-i)
+                abs-min-val
+                ))
+          ;(+ y-offset 0)
+          )
   )
 
 (defn webpage []
   ""
-  (def n 20)
-  (def y 20)
-  (def y-length 4)
-  (def x-width 20)
-  (def x-offset 20)
-  (def y-offset 20)
-  (def scale-line-width 2)
-
-
   (html
     [:html
      [:head
@@ -48,42 +75,28 @@
       (include-css stylesheet)
       ]
      [:body {:id "browser"}
-      [:p {:class "ex" } "user.dir: " (System/getProperty "user.dir")]
-      (for [i (range 0 (+ 1 n))]
-        [:div {:class "small"} (str "val i: " (scale (j-n1 (+ 1 i))))]
-        )
+      ;[:p {:class "ex" } "user.dir: " (System/getProperty "user.dir")]
+      ;(map #(html [:div {:class "small"} "val: " %]) (vec scaled-vals))
+      ;[:div {:class "small"} (str "delta: " (+ max-val (abs min-val)))]
+
       [:svg {:xmlns "http://www.w3.org/2000/svg" :version "1.1"
              :style "border: 1px; border-color: black; border-style: solid;"
              }
-       ;    (circle 20 40)
-       ;    (circle 40 40)
 
-       ; line with x-axis
+       ; display the x-axis
        [:line {:x1 x-offset
-               :y1 y-offset
+               :y1 (+ y-offset (abs min-val))
                :x2 (+ x-offset (* x-width n))
-               :y2 y-offset
+               :y2 (+ y-offset (abs min-val))
                :style "stroke:rgb(0,0,0);stroke-width:2"} ]
 
        ; short lines to see the scale of the x-axis
-       (for [i (range 0 (+ 1 n))]
-         [:line {:x1 (+ x-offset (* i x-width))
-                 :y1 y-offset
-                 :x2 (+ x-offset (* i x-width))
-                 :y2 (+ y-offset y-length)
-                 :class "cls"
-                 }]
-         )
-       (for [i (range 0 (+ 1 n))]
-         (let [
-               yi (scale (j-n1 (+ 1 i)))
-               ]
-           (circle (+ x-offset (* i x-width))
-                   (+ y-offset (abs yi))
-                   ;(+ y-offset 0)
-                   )
-           )
-         )
+       (map display-scale-for-day days)
+
+       (map #(display-value-for-day %                      ; day-i
+                                    (scale (j-n1 (+ 1 %))) ; value-day-i
+                                    )
+            days)
        ]; svg
       ]]; body, html
     ))
@@ -98,6 +111,7 @@
                               :join? false  ; :join? - Block the caller: defaults to true
                               }))
 
-;(websrv)
+(websrv)
+; TODO use clojure.contrib.singleton for starting websrv
 ;(println (str "Web server started on http://localhost:" port webroute))
 
