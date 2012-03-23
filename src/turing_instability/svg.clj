@@ -16,9 +16,9 @@
   )
 
 (comment  ; use these commands on repl
-  (in-ns 'turing-instability.svg)
-  (load "../turing_instability/svg")
-  )
+         (in-ns 'turing-instability.svg)
+         (load "../turing_instability/svg")
+         )
 
 (defn scale [v]
   "Scale given value v for the range which can be displayed on the graph"
@@ -27,7 +27,12 @@
 
 (defn circle [x y]
   "Prints svg tag: <circle cx="20" cy="30" r="4" fill=\"blue\"></circle>"
-  [:circle {:cx (str x) :cy (str y) :r "6" :fill "red"}]
+  (html
+    [:circle {:id (str "id" x) :cx (str x) :cy (str y) :r "6" :fill "red"}]
+    [:text {:id (str "popup" x) :x (str (int (- x 20))) :y (str (int (+ y 20))) :font-size "12" :fill "black" :visibility "hidden"} (str "x:" x " y:" y)
+     [:set {:attributeName "visibility" :from "hidden" :to "visible" :begin (str "id" x ".mouseover") :end (str "id" x ".mouseout")}]
+     ]
+    )
   )
 
 (def n 20)
@@ -57,11 +62,11 @@
 (defn display-value-for-day [day-i value-day-i]
   ;(println "i:" i "; yi:" yi "; abs-min-val:" abs-min-val)
   (circle (+ x-offset (* day-i x-width))
-          (+ y-offset
+          (int (+ y-offset
              (+ value-day-i
                 ;(abs value-day-i)
                 abs-min-val
-                ))
+                )))
           ;(+ y-offset 0)
           )
   )
@@ -93,8 +98,8 @@
        ; short lines to see the scale of the x-axis
        (map display-scale-for-day days)
 
-       (map #(display-value-for-day %                      ; day-i
-                                    (scale (j-n1 (+ 1 %))) ; value-day-i
+       (map #(display-value-for-day (int %)                      ; day-i
+                                    (int (scale (j-n1 (+ 1 %)))) ; value-day-i
                                     )
             days)
        ]; svg
