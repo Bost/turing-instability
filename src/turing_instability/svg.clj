@@ -9,6 +9,9 @@
     [compojure.core]
     [turing-instability.init]
     [turing-instability.relfuncs]
+
+    [analemma.charts :only [emit-svg xy-plot add-points]]
+    [analemma.svg]
     )
   (:require
     [compojure.route :as route]
@@ -16,23 +19,13 @@
   )
 
 (comment  ; use these commands on repl
-         (in-ns 'turing-instability.svg)
          (load "../turing_instability/svg")
+         (in-ns 'turing-instability.svg)
          )
 
 (defn scale [v]
   "Scale given value v for the range which can be displayed on the graph"
   (floor (* 100 v))
-  )
-
-(defn circle [x y]
-  "Prints svg tag: <circle cx="20" cy="30" r="4" fill=\"blue\"></circle>"
-  (html
-    [:circle {:id (str "id" x) :cx (str x) :cy (str y) :r "6" :fill "red"}]
-    [:text {:id (str "popup" x) :x (str (int (- x 20))) :y (str (int (+ y 20))) :font-size "12" :fill "black" :visibility "hidden"} (str "x:" x " y:" y)
-     [:set {:attributeName "visibility" :from "hidden" :to "visible" :begin (str "id" x ".mouseover") :end (str "id" x ".mouseout")}]
-     ]
-    )
   )
 
 (def n 20)
@@ -46,6 +39,8 @@
 ;first-n-vals [f n]
 (def days (range 0 (+ 1 n)))
 (def scaled-vals (map #(scale (j-n1 (+ 1 %))) days))
+(def analemma-data (map vector days scaled-vals))
+
 (def max-val (reduce max (vec scaled-vals)))
 (def min-val (reduce min (vec scaled-vals)))
 (def abs-min-val (abs min-val))
@@ -84,25 +79,11 @@
       ;(map #(html [:div {:class "small"} "val: " %]) (vec scaled-vals))
       ;[:div {:class "small"} (str "delta: " (+ max-val (abs min-val)))]
 
-      [:svg {:xmlns "http://www.w3.org/2000/svg" :version "1.1"
-             :style "border: 1px; border-color: black; border-style: solid;"
-             }
-
-       ; display the x-axis
-       [:line {:x1 x-offset
-               :y1 (+ y-offset (abs min-val))
-               :x2 (+ x-offset (* x-width n))
-               :y2 (+ y-offset (abs min-val))
-               :style "stroke:rgb(0,0,0);stroke-width:2"} ]
-
-       ; short lines to see the scale of the x-axis
-       (map display-scale-for-day days)
-
-       (map #(display-value-for-day (int %)                      ; day-i
-                                    (int (scale (j-n1 (+ 1 %)))) ; value-day-i
-                                    )
-            days)
-       ]; svg
+      (emit-svg
+        (-> (xy-plot :xmin 0 :xmax n,
+                     :ymin min-val :ymax max-val
+                     :height 500 :width 500)
+          (add-points analemma-data)))
       ]]; body, html
     ))
 
