@@ -28,46 +28,19 @@
   (floor (* 100 v))
   )
 
-(def n 20)
-(def y 20)
-(def y-length 4)
-(def x-width 20)
-(def x-offset 20)
-(def y-offset 20)
-(def scale-line-width 2)
+(defn webpage [last-day f0 f1]
+  "compute values for n days using functions f0, f1"
+  (let [
+        first-day 1
+        list-of-days (range first-day (+ 1 last-day))
+        ;vals-f0 (map #(scale (f0 (+ 1 %))) list-of-days)
+        vals-f0 (map #(f0 (+ 1 %)) list-of-days)
+        data-f0 (map vector list-of-days vals-f0)
 
-;first-n-vals [f n]
-(def days (range 0 (+ 1 n)))
-(def scaled-vals (map #(scale (j-n1 (+ 1 %))) days))
-(def analemma-data (map vector days scaled-vals))
-
-(def max-val (reduce max (vec scaled-vals)))
-(def min-val (reduce min (vec scaled-vals)))
-(def abs-min-val (abs min-val))
-
-(defn display-scale-for-day [day-i]
-  (html
-    [:line {:x1 (+ x-offset (* day-i x-width))
-            :y1 (+ y-offset (- y-length) (abs min-val))
-            :x2 (+ x-offset (* day-i x-width))
-            :y2 (+ y-offset y-length (abs min-val))
-            :class "cls"
-            }]))
-
-(defn display-value-for-day [day-i value-day-i]
-  ;(println "i:" i "; yi:" yi "; abs-min-val:" abs-min-val)
-  (circle (+ x-offset (* day-i x-width))
-          (int (+ y-offset
-             (+ value-day-i
-                ;(abs value-day-i)
-                abs-min-val
-                )))
-          ;(+ y-offset 0)
-          )
-  )
-
-(defn webpage []
-  ""
+        ;vals-f1 (map #(scale (f1 (+ 1 %))) list-of-days)
+        vals-f1 (map #(f1 (+ 1 %)) list-of-days)
+        data-f1 (map vector list-of-days vals-f1)
+        ]
   (html
     [:html
      [:head
@@ -78,17 +51,29 @@
       ;[:p {:class "ex" } "user.dir: " (System/getProperty "user.dir")]
       ;(map #(html [:div {:class "small"} "val: " %]) (vec scaled-vals))
       ;[:div {:class "small"} (str "delta: " (+ max-val (abs min-val)))]
+      [:div {:class "small" :style "color: red" } (str "s:" s "; f0:" 'j-jt-diff-n1)]
+      [:div {:class "small" :style "color: blue"} (str "p:" p "; f0:" 'r-rt-diff-n1)]
 
       (emit-svg
-        (-> (xy-plot :xmin 0 :xmax n,
-                     :ymin min-val :ymax max-val
-                     :height 500 :width 500)
-          (add-points analemma-data)))
+        (-> (xy-plot :xmin first-day :xmax last-day,
+                     :ymin (reduce min (vec vals-f1))
+                     :ymax (reduce max (vec vals-f1))
+                     :height 500 :width 1000
+                     ;:label-points? true
+                     )
+          (add-points data-f0 :transpose-data? true :fill (rgb 255 0 0))  ; red
+          (add-points data-f1 :transpose-data? true :fill (rgb 0 0 255))  ; blue
+          ))
       ]]; body, html
-    ))
+    )))
 
 (defroutes webroutes
-           (GET webroute [] (webpage))
+           (GET webroute [] (webpage
+                              20     ; days
+                              j-jt-diff-n1
+                              r-rt-diff-n1
+                              )
+                )
            (route/files "/"))
 
 (defn websrv []
@@ -97,7 +82,7 @@
                               :join? false  ; :join? - Block the caller: defaults to true
                               }))
 
-(websrv)
+;(websrv)
 ; TODO use clojure.contrib.singleton for starting websrv
 ;(println (str "Web server started on http://localhost:" port webroute))
 
