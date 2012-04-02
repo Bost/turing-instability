@@ -7,7 +7,14 @@
 
 (comment
 (load "../turing_instability/relfuncs")
+(in-ns 'turing-instability.relfuncs)
 )
+(defmacro dbg[x]
+  "Print evaluated expression and return its result"
+  `(let [x# ~x]
+     (println '~x "=" x#) x#
+     )
+  )
 
 (declare j-n1)
 (declare r-n1)
@@ -15,10 +22,10 @@
 (declare rt-n1)
 
 ; Basic function for Julia
-(defn j [n] (if (= n 1) day-1-j (j-n1 (- n 1))))
+(defn j  [n] (if (= n 1) day-1-j  (j-n1  (- n 1))))
 
 ; Basic function for Romeo
-(defn r [n] (if (= n 1) day-1-r (r-n1 (- n 1))))
+(defn r  [n] (if (= n 1) day-1-r  (r-n1  (- n 1))))
 
 ; Basic function for Juliette
 (defn jt [n] (if (= n 1) day-1-jt (jt-n1 (- n 1))))
@@ -44,9 +51,10 @@
 ; Julia's next day if influenced by Juliette by the factor of s:
 ;      J(n+1) = J[n] + R[n] + s*[J'[n] - J[n]] + s*[R[n] - R'[n]]
 (defn j-n1 [n]
-  (+ (j n) (r n)
-	 (* s
-		(- (jt n) (j n)))))
+  (+ (j n)
+     (r n)
+     (* s (- (jt n) (j n))
+     (* s (- (rt n) (r n))))))
 
 
 
@@ -66,9 +74,10 @@
 ; Juliette's next day if influenced by Julia by the factor of s:
 ;      J'(n+1) = J'[n] + R'[n] + s*[J[n] - J'[n]] + s*[R[n] - R'[n]]
 (defn jt-n1 [n]
-  (+ (jt n) (rt n))
-  (* s (- (j n) (jt n))
-	 (* s (- (r n) (rt n)))))
+  (+ (jt n)
+     (rt n)
+     (* s (- (j n) (jt n))
+     (* s (- (r n) (rt n))))))
 
 ; Roberto's next day if not influenced by Romeo:
 ;      R'(n+1) = -J'[n]                  (defn rt-n1 [n] (-(jt n)))
@@ -131,7 +140,6 @@
 )
 
 (def j-n1 (memoize j-n1))
-(def r-n1 (memoize r-n1))
 (def r-n1 (memoize r-n1))
 (def jt-n1 (memoize jt-n1))
 (def rt-n1 (memoize rt-n1))
