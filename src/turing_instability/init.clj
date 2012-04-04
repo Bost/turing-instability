@@ -8,11 +8,11 @@
          )
 
 ; current affection: 1 - positive ; 0 - neutral; -1 - negative
-(def day-1-j 1); In the begining Julia likes Romeo
-(def day-1-r 0); In the begining Romeno is neutral towards Julia
+(def day-1-j  1); In the begining Julia likes Romeo
+(def day-1-r -1); In the begining Romeno is neutral towards Julia
 
 (def day-1-jt  1); In the begining Juliette is neutral towars Roberto
-(def day-1-rt  -1); In the begining Roberto likes Juliette
+(def day-1-rt  0); In the begining Roberto likes Juliette
 
 ; Influence factor saying how much Julia and Juliette influence each other
 ; 0 <= s <= 1; 0: no influence, 1: total influence
@@ -21,6 +21,11 @@
 ; Influence factor saying how much Romeo and Roberto influence each other
 ; 0 <= p <= 1; 0: no influence, 1: total influence
 (def p 0)
+
+;j :[ 1  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0]
+;jt:[-1 -1 -2 -2 -1  0  0 -1 -2 -2 -1  0  0 -1 -2 -2 -1  0  0 -1]
+;r :[-1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -1]
+;rt:[ 0 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -1]
 
 
 (def port 8080)

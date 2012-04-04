@@ -34,6 +34,13 @@
 (defn getval [v0 v1 f]
   (f (get-from-vec v0 f) (get-from-vec v1 f)))
 
+(defn x [n]
+  (if (< n 0)
+    (str n)
+    (str "&nbsp;" n)
+    )
+  )
+
 (defn webpage [last-day f0 f1]
   "compute values for n days using functions f0, f1"
   (let [
@@ -61,14 +68,18 @@
       ;[:div {:class "small"} (str "vals-f1:" (vec vals-f1))]
       ;[:div {:class "small"} (str "min:" (getval vals-f0 vals-f1 min))]
       ;[:div {:class "small"} (str "max:" (getval vals-f0 vals-f1 max))]
-      [:div {:class "small"} (str "j :" (vec (map #(j  %) list-of-days)))]
-      [:div {:class "small"} (str "r :" (vec (map #(r  %) list-of-days)))]
-      [:div {:class "small"} (str "jt:" (vec (map #(jt %) list-of-days)))]
-      [:div {:class "small"} (str "rt:" (vec (map #(rt %) list-of-days)))]
-      [:div {:class "small"} (str "j-jt-diff:" (vec (map #(j-jt-diff %) list-of-days)))]
-      [:div {:class "small"} (str "r-rt-diff:" (vec (map #(r-rt-diff %) list-of-days)))]
-      [:div {:class "small"} (str "j-jt-diff-n1:" (vec (map #(j-jt-diff-n1 %) list-of-days)))]
-      [:div {:class "small"} (str "r-rt-diff-n1:" (vec (map #(r-rt-diff-n1 %) list-of-days)))]
+      [:div {:class "small"} (str "j____:" (vec (map #(x(j     %)) list-of-days)))]
+      [:div {:class "small"} (str "j-n1_:" (vec (map #(x(j-n1  %)) list-of-days)))]
+      [:div {:class "small"} (str "jt___:" (vec (map #(x(jt    %)) list-of-days)))]
+      [:div {:class "small"} (str "jt-n1:" (vec (map #(x(jt-n1 %)) list-of-days)))]
+      [:div {:class "small"} (str "r____:" (vec (map #(x(r     %)) list-of-days)))]
+      [:div {:class "small"} (str "r-n1_:" (vec (map #(x(r-n1  %)) list-of-days)))]
+      [:div {:class "small"} (str "rt___:" (vec (map #(x(rt    %)) list-of-days)))]
+      [:div {:class "small"} (str "rt-n1:" (vec (map #(x(rt-n1 %)) list-of-days)))]
+      ;[:div {:class "small"} (str "j-jt-diff:" (vec (map #(j-jt-diff %) list-of-days)))]
+      ;[:div {:class "small"} (str "r-rt-diff:" (vec (map #(r-rt-diff %) list-of-days)))]
+      ;[:div {:class "small"} (str "j-jt-diff-n1:" (vec (map #(j-jt-diff-n1 %) list-of-days)))]
+      ;[:div {:class "small"} (str "r-rt-diff-n1:" (vec (map #(r-rt-diff-n1 %) list-of-days)))]
       ;[:div {:class "small"} (str "day-1-j :" day-1-j)]
       ;[:div {:class "small"} (str "day-1-r :" day-1-r)]
       ;[:div {:class "small"} (str "day-1-jt :" day-1-jt)]
@@ -90,9 +101,9 @@
 (defroutes webroutes
            (GET webroute [] (webpage
                               20     ; days
-                              ;j-jt-diff r-rt-diff
+                              j-jt-diff r-rt-diff
                               ;j-jt-diff-n1 r-rt-diff-n1
-                              jt rt
+                              ;jt rt
                               ;j r
                               )
                 )

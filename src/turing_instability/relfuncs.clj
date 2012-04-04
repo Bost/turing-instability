@@ -53,20 +53,21 @@
 (defn j-n1 [n]
   (+ (j n)
      (r n)
-     (* s (- (jt n) (j n))
-     (* s (- (rt n) (r n))))))
-
-
+     (* s (- (jt n) (j n)))
+     (* s (- (rt n) (r n)))))
 
 ; Romeo's next day if not influenced by Roberto:
 ;      R(n+1) = -J[n];                   (defn r-n1 [n] (-(j n)))
 ;
 ; Romes's next day if influenced by Roberto by the factor of p:
-;      R(n+1) = -J[n] - p*[R'[n] - R[n]]
+;      R(n+1) = -J[n] - p*[R'[n] - R[n]] = -1 * (J[n] + p * (R'[n] - R[n]))
 (defn r-n1 [n]
-  (- (-(j n))
-	 (* p
-		(- (rt n) (r n)))))
+  (* -1 
+     (+ (j n)
+        (* p (- (rt n) (r n))))))
+;  (- (-(j n))
+;	 (* p
+;		(- (rt n) (r n)))))
 
 ; Juliette next day if not influenced by Julia:
 ;      J'(n+1) = J'[n] + R'[n]           (defn jt-n1 [n] (+ (jt n) (rt n)))
@@ -76,8 +77,8 @@
 (defn jt-n1 [n]
   (+ (jt n)
      (rt n)
-     (* s (- (j n) (jt n))
-     (* s (- (r n) (rt n))))))
+     (* s (- (j n) (jt n)))
+     (* s (- (r n) (rt n)))))
 
 ; Roberto's next day if not influenced by Romeo:
 ;      R'(n+1) = -J'[n]                  (defn rt-n1 [n] (-(jt n)))
@@ -102,8 +103,9 @@
 ; Romeo & Roberto Difference for the next day if they don't influence each other:
 ;      R-(n+1) = -(1 - 2*p) * J-[n]
 (defn r-rt-diff-n1 [n]
-  (* (-(- 1 (* 2 p))
-	   (j-jt-diff n))))
+  (* (j-jt-diff n)
+     (* -1 (- 1 (* 2 p)))
+     ))
 
 ; Julia & Juliette Averadge for the next day if they don't influence each other:
 ;      J+(n+1) = J+[n] + R+[n]
