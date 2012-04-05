@@ -105,25 +105,34 @@
 	    (setf (gethash n previous) (funcall old-j-n1 n)))))
 )
 
-(comment
-(defn memoize [f]
-  (let [mem (atom {})]              ; mem is an atom (reference type) with an initial value of empty hash-map {}
-    (fn [& args]
-      (if-let [                     ; if-let is a combination of 'if' and 'let';
-               e (find @mem args)   ; try to find a value associated with 'args' in the map 'mem', if any non-nil value is found then let it be available under 'e'.
-                                    ; Deref: @form → (deref form); '@mem' returns the current state of the 'mem' atom
-               ]
-        (val e)
-        (let [ret (apply f args)]     ; apply function 'f' to the list of arguments 'args' and store the result in 'ret'
-          (swap! mem assoc args ret)  ; 'swap!' changes the value of the 'mem' atom; assoc[iate]: (assoc map key val)
-                                      ; ie. mem <- assoc mem args ret
-          ret)))))
-)
 
-(def j-n1 (memoize j-n1))
-(def r-n1 (memoize r-n1))
-(def jt-n1 (memoize jt-n1))
-(def rt-n1 (memoize rt-n1))
-(def j-jt-diff-n1 (memoize j-jt-diff-n1))
-(def r-rt-diff-n1 (memoize r-rt-diff-n1))
+;; For versions of Clojure that don't have metadata on functions, this
+;; allows you to reset the atom by passing the magic argument :reset!
+(defn resetable-memoize [f]
+  (let [mem (atom {})]
+    (fn [& args]
+      (if (= (first args) :reset!)
+        (reset! mem {})
+        (if-let [e (find @mem args)]
+          (val e)
+          (let [ret (apply f args)]
+            (swap! mem assoc args ret)
+            ret))))))
+
+(def j-n1         (resetable-memoize j-n1))
+(def r-n1         (resetable-memoize r-n1))
+(def jt-n1        (resetable-memoize jt-n1))
+(def rt-n1        (resetable-memoize rt-n1))
+(def j-jt-diff-n1 (resetable-memoize j-jt-diff-n1))
+(def r-rt-diff-n1 (resetable-memoize r-rt-diff-n1))
+
+(defn reset []
+ (j-n1 :reset!)
+ (r-n1 :reset!)
+ (jt-n1 :reset!)
+ (rt-n1 :reset!)
+ (j-jt-diff-n1 :reset!)
+ (r-rt-diff-n1 :reset!)
+ )
+
 
