@@ -45,12 +45,12 @@
   "compute values for n days using functions f0, f1"
   (let [
         first-day 1
-        list-of-days (range first-day (+ 1 last-day))
-        vals-f0 (map #(f0 %) list-of-days)
-        data-f0 (map vector list-of-days vals-f0)
+        ldays (range first-day (+ 1 last-day))
+        vals-f0 (map #(f0 %) ldays)
+        data-f0 (map vector ldays vals-f0)
 
-        vals-f1 (map #(f1 %) list-of-days)
-        data-f1 (map vector list-of-days vals-f1)
+        vals-f1 (map #(f1 %) ldays)
+        data-f1 (map vector ldays vals-f1)
         ]
   (html
     [:html
@@ -68,27 +68,33 @@
       ;[:div {:class "small"} (str "vals-f1:" (vec vals-f1))]
       ;[:div {:class "small"} (str "min:" (getval vals-f0 vals-f1 min))]
       ;[:div {:class "small"} (str "max:" (getval vals-f0 vals-f1 max))]
-      [:div {:class "small"} (str "j____:" (vec (map #(x(j     %)) list-of-days)))]
-      [:div {:class "small"} (str "j-n1_:" (vec (map #(x(j-n1  %)) list-of-days)))]
-      [:div {:class "small"} (str "jt___:" (vec (map #(x(jt    %)) list-of-days)))]
-      [:div {:class "small"} (str "jt-n1:" (vec (map #(x(jt-n1 %)) list-of-days)))]
-      [:div {:class "small"} (str "r____:" (vec (map #(x(r     %)) list-of-days)))]
-      [:div {:class "small"} (str "r-n1_:" (vec (map #(x(r-n1  %)) list-of-days)))]
-      [:div {:class "small"} (str "rt___:" (vec (map #(x(rt    %)) list-of-days)))]
-      [:div {:class "small"} (str "rt-n1:" (vec (map #(x(rt-n1 %)) list-of-days)))]
-      ;[:div {:class "small"} (str "j-jt-diff:" (vec (map #(j-jt-diff %) list-of-days)))]
-      ;[:div {:class "small"} (str "r-rt-diff:" (vec (map #(r-rt-diff %) list-of-days)))]
-      ;[:div {:class "small"} (str "j-jt-diff-n1:" (vec (map #(j-jt-diff-n1 %) list-of-days)))]
-      ;[:div {:class "small"} (str "r-rt-diff-n1:" (vec (map #(r-rt-diff-n1 %) list-of-days)))]
+      
+	  ;[:div {:class "small"} (str "j____:" (vec (map #(x(j     %)) ldays)))]
+      ;[:div {:class "small"} (str "j-n1_:" (vec (map #(x(j-n1  %)) ldays)))]
+      ;[:div {:class "small"} (str "jt___:" (vec (map #(x(jt    %)) ldays)))]
+      ;[:div {:class "small"} (str "jt-n1:" (vec (map #(x(jt-n1 %)) ldays)))]
+      ;[:div {:class "small"} (str "jdiff:" (vec (map #(x(j-jt-diff %)) ldays)))]
+      ;[:div {:class "small"} (str "-------------------")]
+      
+	  ;[:div {:class "small"} (str "r____:" (vec (map #(x(r     %)) ldays)))]
+      ;[:div {:class "small"} (str "r-n1_:" (vec (map #(x(r-n1  %)) ldays)))]
+      ;[:div {:class "small"} (str "rt___:" (vec (map #(x(rt    %)) ldays)))]
+      ;[:div {:class "small"} (str "rt-n1:" (vec (map #(x(rt-n1 %)) ldays)))]
+      ;[:div {:class "small"} (str "rdiff:" (vec (map #(x(r-rt-diff %)) ldays)))]
+      
+	  ;[:div {:class "small"} (str "j-jt-diff:" (vec (map #(j-jt-diff %) ldays)))]
+      ;[:div {:class "small"} (str "r-rt-diff:" (vec (map #(r-rt-diff %) ldays)))]
+      ;[:div {:class "small"} (str "j-jt-diff-n1:" (vec (map #(j-jt-diff-n1 %) ldays)))]
+      ;[:div {:class "small"} (str "r-rt-diff-n1:" (vec (map #(r-rt-diff-n1 %) ldays)))]
       ;[:div {:class "small"} (str "day-1-j :" day-1-j)]
       ;[:div {:class "small"} (str "day-1-r :" day-1-r)]
       ;[:div {:class "small"} (str "day-1-jt :" day-1-jt)]
       ;[:div {:class "small"} (str "day-1-rt :" day-1-rt)]
-
-      (emit-svg
+      
+	  (emit-svg
         (-> (xy-plot :xmin first-day :xmax last-day,
-                     :ymin (getval vals-f0 vals-f1 min)
-                     :ymax (getval vals-f0 vals-f1 max)
+                     :ymin (min -1 (getval vals-f0 vals-f1 min))
+                     :ymax (max  1 (getval vals-f0 vals-f1 max))
                      :height 500 :width 1000
                      ;:label-points? true
                      )
@@ -101,6 +107,7 @@
 (defroutes webroutes
            (GET webroute [] (webpage
                               20     ; days
+                              ;j-jt-avrg r-rt-avrg
                               j-jt-diff r-rt-diff
                               ;j-jt-diff-n1 r-rt-diff-n1
                               ;jt rt
