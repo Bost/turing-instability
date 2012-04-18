@@ -10,6 +10,9 @@
                  [org.clojure/math.numeric-tower "0.0.1"]
                  [org.clojars.pallix/analemma "1.0.0-SNAPSHOT"]
                  ]
+  :plugins [
+            [lein-tarsier "0.9.1"]
+            ]
 ;  :jvm-opts ["-Xmx1024m"]
 
   :main turing-instability.core
